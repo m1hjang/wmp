@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: wemakeprice
+  profiles:
+    active: default
+server:
+  port: 9099
