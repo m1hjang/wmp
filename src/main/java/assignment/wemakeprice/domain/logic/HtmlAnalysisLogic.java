@@ -1,5 +1,7 @@
 package assignment.wemakeprice.domain.logic;
 
+import assignment.wemakeprice.domain.logic.helper.AsciiCodeUtils;
+import assignment.wemakeprice.domain.logic.helper.SortHelper;
 import assignment.wemakeprice.domain.query.HtmlAnalysisQuery;
 import assignment.wemakeprice.domain.vo.AnalysisType;
 import assignment.wemakeprice.domain.vo.HtmlAnalysis;
@@ -11,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,28 +44,25 @@ public class HtmlAnalysisLogic {
             e.printStackTrace();
         }
 
-        SortLogic.sortAscending(numbers);
-        SortLogic.sortAscending(alphabets);
+        SortHelper.sortAscending(numbers);
+        SortHelper.sortAscending(alphabets, AsciiCodeUtils::mapToAlphabeticalOrder);
+
+        StringBuilder builder = new StringBuilder();
+        Iterator<Integer> numberIterator = numbers.iterator();
+        Iterator<Integer> alphabetIterator = alphabets.iterator();
+
+        while (numberIterator.hasNext() || alphabetIterator.hasNext()) {
+            if (alphabetIterator.hasNext()) {
+                builder.append(Character.toString(alphabetIterator.next()));
+            }
+            if (numberIterator.hasNext()) {
+                builder.append(Character.toString(numberIterator.next()));
+            }
+        }
 
         int numberLength = numbers.size();
         int alphabetLength = alphabets.size();
         int totalLength = numberLength + alphabetLength;
-
-        int numberIndex = 0;
-        int alphabetIndex = 0;
-        StringBuilder builder = new StringBuilder();
-
-        while ((numberIndex < numberLength) || (alphabetIndex < alphabetLength)) {
-            if (numberIndex < numberLength) {
-                builder.append(Character.toString(numbers.get(numberIndex)));
-                numberIndex++;
-            }
-            if (alphabetIndex < alphabetLength) {
-                builder.append(Character.toString(alphabets.get(alphabetIndex)));
-                alphabetIndex++;
-            }
-        }
-
         int divisor = query.getDivisor();
         int quotient = totalLength - (totalLength % divisor) ;
 
@@ -75,16 +75,16 @@ public class HtmlAnalysisLogic {
         );
     }
 
-    private static void filterAllAlphaNumerics(BufferedReader reader, List<Integer> numbers, List<Integer> alphabets) throws IOException {
+    private void filterAllAlphaNumerics(BufferedReader reader, List<Integer> numbers, List<Integer> alphabets) throws IOException {
         String line;
 
         while ((line = reader.readLine()) != null) {
             List<Integer> asciiCodes = line.chars().boxed().collect(Collectors.toList());
 
             for (int asciiCode : asciiCodes) {
-                if (CharFilter.isNumber(asciiCode)) {
+                if (AsciiCodeUtils.isNumber(asciiCode)) {
                     numbers.add(asciiCode);
-                } else if (CharFilter.isAlphabet(asciiCode)) {
+                } else if (AsciiCodeUtils.isAlphabet(asciiCode)) {
                     alphabets.add(asciiCode);
                 }
             }
@@ -93,7 +93,7 @@ public class HtmlAnalysisLogic {
         reader.close();
     }
 
-    private static void filterWithoutHtmlTag(BufferedReader reader, List<Integer> numbers, List<Integer> alphabets) throws IOException {
+    private void filterWithoutHtmlTag(BufferedReader reader, List<Integer> numbers, List<Integer> alphabets) throws IOException {
         String line;
         boolean tagFlag = false;
 
@@ -102,10 +102,10 @@ public class HtmlAnalysisLogic {
 
             for (int asciiCode : asciiCodes) {
 
-                if (CharFilter.isLeftAngleBracket(asciiCode)) {
+                if (AsciiCodeUtils.isLeftAngleBracket(asciiCode)) {
                     tagFlag = true;
                     continue;
-                } else if (CharFilter.isRightAngleBracket(asciiCode)){
+                } else if (AsciiCodeUtils.isRightAngleBracket(asciiCode)){
                     tagFlag = false;
                     continue;
                 }
@@ -114,9 +114,9 @@ public class HtmlAnalysisLogic {
                     continue;
                 }
 
-                if (CharFilter.isNumber(asciiCode)) {
+                if (AsciiCodeUtils.isNumber(asciiCode)) {
                     numbers.add(asciiCode);
-                } else if (CharFilter.isAlphabet(asciiCode)) {
+                } else if (AsciiCodeUtils.isAlphabet(asciiCode)) {
                     alphabets.add(asciiCode);
                 }
             }
