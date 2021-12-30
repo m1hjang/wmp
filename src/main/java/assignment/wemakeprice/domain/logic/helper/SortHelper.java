@@ -9,31 +9,37 @@ public class SortHelper {
         quickSort(list, 0, list.size() - 1, Function.identity());
     }
 
-    public static void sortAscending(List<Integer> list, Function<Integer, Integer> order) {
-        quickSort(list, 0, list.size() - 1, order);
+    public static void sortAscending(List<Integer> list, Function<Integer, Integer> orderMapper) {
+        quickSort(list, 0, list.size() - 1, orderMapper);
     }
 
-    private static void quickSort(List<Integer> list, int startIndex, int endIndex, Function<Integer, Integer> order) {
-        int pivotIndex = searchAndSwap(list, startIndex, endIndex, order);
+    private static void quickSort(List<Integer> list,
+                                  int startIndex,
+                                  int endIndex,
+                                  Function<Integer, Integer> orderMapper) {
+        int pivotIndex = searchAndSwap(list, startIndex, endIndex, orderMapper);
 
         if (startIndex < pivotIndex - 1) {
-            quickSort(list, startIndex, pivotIndex - 1, order);
+            quickSort(list, startIndex, pivotIndex - 1, orderMapper);
         }
 
         if (endIndex > pivotIndex) {
-            quickSort(list, pivotIndex, endIndex, order);
+            quickSort(list, pivotIndex, endIndex, orderMapper);
         }
     }
 
-    private static int searchAndSwap(List<Integer> list, int startIndex, int endIndex, Function<Integer, Integer> order) {
-        int pivot = order.apply(list.get((startIndex + endIndex) / 2));
+    private static int searchAndSwap(List<Integer> list,
+                                     int startIndex,
+                                     int endIndex,
+                                     Function<Integer, Integer> orderMapper) {
+        int pivot = orderMapper.apply(list.get((startIndex + endIndex) / 2));
 
         int startPoint = startIndex;
         int endPoint = endIndex;
 
         while (startPoint <= endPoint) {
-            while (order.apply(list.get(startPoint)) < pivot) startPoint++;
-            while (order.apply(list.get(endPoint)) > pivot) endPoint--;
+            while (orderMapper.apply(list.get(startPoint)) < pivot) startPoint++;
+            while (orderMapper.apply(list.get(endPoint)) > pivot) endPoint--;
 
             if (startPoint <= endPoint) {
                 swap(list, startPoint, endPoint);
