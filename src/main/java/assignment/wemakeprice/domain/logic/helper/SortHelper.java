@@ -6,10 +6,16 @@ import java.util.function.Function;
 public class SortHelper {
 
     public static void sortAscending(List<Integer> list) {
+        if (list.isEmpty()) {
+            return;
+        }
         quickSort(list, 0, list.size() - 1, Function.identity());
     }
 
     public static void sortAscending(List<Integer> list, Function<Integer, Integer> orderMapper) {
+        if (list.isEmpty()) {
+            return;
+        }
         quickSort(list, 0, list.size() - 1, orderMapper);
     }
 
