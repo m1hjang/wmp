@@ -16,7 +16,8 @@ class SortHelperTest {
         SortHelper.sortAscending(integers);
 
         int[] expected = {1, 3, 5, 7};
-        assertArrayEquals(expected, integers.stream().mapToInt(i -> i).toArray());
+        int[] actualResult = integers.stream().mapToInt(i -> i).toArray();
+        assertArrayEquals(expected, actualResult);
     }
 
     @Test
@@ -33,6 +34,7 @@ class SortHelperTest {
         });
 
         int[] expected = {65, 97, 66, 98, 67, 99, 68, 100};
-        assertArrayEquals(expected, asciiCodes.stream().mapToInt(i -> i).toArray());
+        int[] actualResult = asciiCodes.stream().mapToInt(i -> i).toArray();
+        assertArrayEquals(expected, actualResult);
     }
 }

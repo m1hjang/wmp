@@ -24,17 +24,29 @@ public class HtmlAnalysisLogicTest {
         assert htmlUrl != null;
         String url = htmlUrl.toString();
 
-        HtmlAnalysis htmlAnalysis = htmlAnalysisLogic.analyze(new HtmlAnalysisQuery(
+        HtmlAnalysis htmlAnalysisWithoutHtmlTag = htmlAnalysisLogic.analyze(new HtmlAnalysisQuery(
                 url,
-                10,
+                50,
                 AnalysisType.WithoutHtmlTag
         ));
 
-        String quotientString = htmlAnalysis.getQuotientString();
-        String remainderString = htmlAnalysis.getRemainderString();
-        int remainderStringLength = remainderString.getBytes().length;
-        int quotientStringLength = quotientString.getBytes().length;
-        assertEquals(quotientStringLength, 0);
-        assertEquals(remainderStringLength, 8);
+        String quotientNoTag = htmlAnalysisWithoutHtmlTag.getQuotientString();
+        String remainderNoTag = htmlAnalysisWithoutHtmlTag.getRemainderString();
+        int remainderStringLength = remainderNoTag.getBytes().length;
+        int quotientStringLength = quotientNoTag.getBytes().length;
+
+        assertEquals(0, quotientStringLength);
+        assertEquals(10, remainderStringLength);
+        assertEquals("a0b1ddehoy", remainderNoTag);
+
+        HtmlAnalysis htmlAnalysisAllText = htmlAnalysisLogic.analyze(new HtmlAnalysisQuery(
+                url,
+                10,
+                AnalysisType.AllText
+        ));
+
+        String quotientAllText = htmlAnalysisAllText.getQuotientString();
+
+        assertEquals("a0a1a8aabbbCcDddddddEeeeeefhhhhhhhlllmmmmOoooPrSTttttttuYyyy", quotientAllText);
     }
 }
